@@ -1,0 +1,10 @@
+[package]
+name = "uvat-rs"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+faer = "0.21"
+faer-traits = "0.21"
+pulp = "0.18"
+rayon = "1.10"
