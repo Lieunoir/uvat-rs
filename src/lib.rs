@@ -1,14 +1,11 @@
-//! Partial reimplementation in Rust of the paper
-//! ["Joint optimization of distortion and cut location for mesh parameterization using an Ambrosio-Tortorelli functional"](https://perso.liris.cnrs.fr/david.coeurjolly/publication/uv-at/uv-at.pdf)
-//! with better performances.
+#![doc = include_str!("../Readme.md")]
 //!
-//! Only the variational part is provided: the final cutting part is missing, as well as the
-//! initialization part (which should be provided using Tutte's method after an initial cut).
+//! # Usage
 //!
-//! An interactive demo can be run using `cargo run -r --example demo`. Obj files to use can be
-//! found [here](https://github.com/Lieunoir/UV-AT/tree/main/input).
+//! Assuming `v` holds vertices and `f` face indices, the following code
+//! computes an initial Tutte parameterization and then run the solver with
+//! default parameters.
 //!
-//! Can be used the following way (assuming $v$ holds vertices values and $f$ faces indices):
 //! ```
 //! use uvat_rs::utils::{build_edge_map, compute_tutte_parameterization, get_boundary_loop};
 //! use uvat_rs::{UVATOptions, UVAT};
@@ -44,6 +41,7 @@ use rayon::iter::{
 };
 use rayon::slice::ParallelSlice;
 use utils::{apply_constraints, build_edge_map, flip_avoiding_line_search, MyIndex};
+/// Various functions that can be used in order to build the initial parameterization.
 pub mod utils;
 
 // v1 + t v1' (x1 + t x1', y1 + t y1')
