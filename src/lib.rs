@@ -10,8 +10,8 @@
 //!
 //! Can be used the following way (assuming $v$ holds vertices values and $f$ faces indices):
 //! ```
-//! use uvat_rs::utils::compute_tutte_parameterization;
-//! use uvat_rs::utils::{build_edge_map, get_boundary_loop};
+//! use uvat_rs::utils::{build_edge_map, compute_tutte_parameterization, get_boundary_loop};
+//! use uvat_rs::{UVATOptions, UVAT};
 //!
 //! let mut e = build_edge_map(&f, v.len());
 //! let mut b = get_boundary_loop(&f, &e);
