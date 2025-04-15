@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["Mat","MatMut","MatRef"],"trait":["AsMat","AsMatMut","AsMatRef","MatIndex"]};

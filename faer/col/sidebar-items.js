@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["Col","ColMut","ColRef"],"trait":["AsColMut","AsColRef","ColIndex"]};
