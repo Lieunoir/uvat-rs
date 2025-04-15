@@ -1,5 +1,10 @@
 # UVAT-rs
 
+[![Documentation][doc-img]][doc-url]
+
+[doc-img]: https://img.shields.io/badge/doc-uvat-green
+[doc-url]: https://lieunoir.github.io/uvat-rs/uvat_rs/
+
 | ![screenshot_000](https://github.com/user-attachments/assets/1275af70-a28a-4717-9051-4b0dc699bedb) | ![screenshot_001](https://github.com/user-attachments/assets/af61b0e6-d595-42d0-83ad-4162d619139c) |
 | - | - |
 | Resulting distorsion | Parameterization with $v$ |
