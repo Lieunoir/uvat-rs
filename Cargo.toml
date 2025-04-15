@@ -8,3 +8,6 @@ faer = "0.21"
 faer-traits = "0.21"
 pulp = "0.18"
 rayon = "1.10"
+
+[dev-dependencies]
+deuxfleurs = { git = "https://github.com/Lieunoir/deuxfleurs" }

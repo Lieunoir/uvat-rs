@@ -1,3 +1,36 @@
+//! Partial reimplementation in Rust of the paper
+//! ["Joint optimization of distortion and cut location for mesh parameterization using an Ambrosio-Tortorelli functional"](https://perso.liris.cnrs.fr/david.coeurjolly/publication/uv-at/uv-at.pdf)
+//! with better performances.
+//!
+//! Only the variational part is provided: the final cutting part is missing, as well as the
+//! initialization part (which should be provided using Tutte's method after an initial cut).
+//!
+//! An interactive demo can be run using `cargo run -r --example demo`. Obj files to use can be
+//! found [here](https://github.com/Lieunoir/UV-AT/tree/main/input).
+//!
+//! Can be used the following way (assuming $v$ holds vertices values and $f$ faces indices):
+//! ```
+//! use uvat_rs::utils::compute_tutte_parameterization;
+//! use uvat_rs::utils::{build_edge_map, get_boundary_loop};
+//!
+//! let mut e = build_edge_map(&f, v.len());
+//! let mut b = get_boundary_loop(&f, &e);
+//! // If no boundary is found, we assume genus 0 surface and apply a simple cut.
+//! // Higher genus surfaces are not handled
+//! if b.len() == 0 {
+//!     let v0 = v[f[0][1] as usize].to_owned();
+//!     v.push(v0);
+//!     f[0][1] = v.len() as u32 - 1;
+//!     e = build_edge_map(&f, v.len());
+//!     b = get_boundary_loop(&f, &e);
+//! }
+//!
+//! let mut p = compute_tutte_parameterization(&v, &f, e, &b[0]);
+//! let mut uvat_solver = UVAT::new(&v, &f, &mut p, UVAToptions::default());
+//! let v_values = uvat_solver.solve(&f, &mut p);
+//! // Now `p` holds the resulting parameterization, and `v_values` the values
+//! // of $v$ in UVAT
+//! ```
 use core::f64::consts::SQRT_2;
 use faer::linalg::solvers::Solve;
 use faer::reborrow::Reborrow;
@@ -491,6 +524,7 @@ fn build_symbolic<I: Index>(f: &[[I; 3]]) -> (Vec<Pair<I, I>>, Vec<I>, Vec<I>) {
 }
 
 /// User values for the UVAT solvers
+#[derive(Clone)]
 pub struct UVATOptions {
     /// Coefficient penalizing seam length over distorsion (lower means more seams allowed)
     pub lambda: f64,
@@ -611,9 +645,10 @@ impl<I: MyIndex> UVAT<I> {
     /// Arguments :
     /// * `f` : faces indices of the surface
     /// * `p` : a valid initial parameterization (such as one provided by the Tutte method)
-    pub fn solve(&mut self, f: &[[I; 3]], p: &mut [[f64; 2]]) {
+    pub fn solve(&mut self, f: &[[I; 3]], p: &mut [[f64; 2]]) -> Vec<f64> {
         let mut v = vec![1.; p.len()];
         while !self.single_step(&f, p, &mut v) {}
+        v
     }
 
     /// Single step of UV and then AT optimization. Returns wether the solver has ended or not. Can be used to dsplay intermediate states of the optimization.
