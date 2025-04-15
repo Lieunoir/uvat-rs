@@ -24,7 +24,7 @@ jobs:
           override: true
 
       - name: Build documentation
-        run: RUSTDOCFLAGS="--html-in-header katex-header.html" cargo doc --no-deps
+        run: cargo doc --no-deps
         # uses: actions-rs/cargo@v1
         # with:
         #   command: doc
@@ -37,7 +37,7 @@ jobs:
           touch target/doc/.nojekyll
 
       - name: Upload as artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Documentation
           path: target/doc
