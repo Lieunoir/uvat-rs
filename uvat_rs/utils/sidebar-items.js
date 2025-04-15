@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["apply_constraints","apply_constraints_mat","build_edge_map","build_intrinsic_delaunay","build_mass_cotan_laplacian_intrinsic","compute_tutte_parameterization","flip_avoiding_line_search","get_boundary_loop","is_delaunay","map_to_circle","mollify"],"trait":["MyIndex"]};

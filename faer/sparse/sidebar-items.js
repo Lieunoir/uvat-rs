@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["CreationError","FaerError"],"mod":["linalg","ops","utils"],"struct":["Argsort","Pair","SparseColMat","SparseColMatMut","SparseColMatRef","SparseRowMat","SparseRowMatMut","SparseRowMatRef","SymbolicSparseColMat","SymbolicSparseColMatRef","SymbolicSparseRowMat","SymbolicSparseRowMatRef","Triplet"]};
