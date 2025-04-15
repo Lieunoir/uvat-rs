@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["temp_mat_scratch","temp_mat_uninit","temp_mat_zeroed"],"mod":["cholesky","evd","householder","jacobi","kron","lu","matmul","qr","solvers","svd","triangular_inverse","triangular_solve","zip"]};

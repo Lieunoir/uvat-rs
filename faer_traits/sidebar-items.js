@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["SimdCapabilities"],"mod":["math_utils"],"struct":["ComplexConj","RealReg","SimdCtx","SimdCtxCopy","Symbolic"],"trait":["AddByRef","ByRef","ComplexField","Conjugate","DivByRef","Index","MulByRef","NegByRef","RealField","Seal","SignedIndex","SimdArch","SubByRef"],"type":["Real"]};

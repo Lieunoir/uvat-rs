@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["qr_in_place","qr_in_place_scratch"],"struct":["ColPivQrInfo","ColPivQrParams"]};

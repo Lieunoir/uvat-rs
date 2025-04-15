@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["solve_in_place","solve_in_place_scratch","solve_in_place_with_conj","solve_transpose_in_place","solve_transpose_in_place_scratch","solve_transpose_in_place_with_conj"]};

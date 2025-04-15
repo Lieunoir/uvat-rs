@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"struct":["SimdBody","SimdCtx","SimdHead","SimdTail"],"trait":["SimdIndex"]};

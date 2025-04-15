@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["pack_lhs","pack_rhs","quick_zero"]};

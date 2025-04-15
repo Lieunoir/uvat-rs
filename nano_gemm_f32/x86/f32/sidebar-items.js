@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"mod":["avx","f32x1","f32x2","f32x4"]};

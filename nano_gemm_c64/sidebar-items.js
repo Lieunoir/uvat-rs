@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"mod":["x86"],"type":["c64"]};

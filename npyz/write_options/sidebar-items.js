@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"struct":["WithDType","WithShape","WithWriter","WriteOptions"],"trait":["HasDType","HasShape","HasWriter","MissingWriter","WriterBuilder"]};

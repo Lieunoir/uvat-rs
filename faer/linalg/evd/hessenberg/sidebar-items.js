@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["hessenberg_in_place","hessenberg_in_place_scratch"],"struct":["HessenbergParams"]};

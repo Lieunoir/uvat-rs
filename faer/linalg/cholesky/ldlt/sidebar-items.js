@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"mod":["factor","inverse","reconstruct","solve","update"]};

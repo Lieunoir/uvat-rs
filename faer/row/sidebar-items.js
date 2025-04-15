@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"struct":["Row","RowMut","RowRef"],"trait":["AsRowMut","AsRowRef","RowIndex"]};

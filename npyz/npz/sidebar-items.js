@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["array_name_from_file_name","file_name_from_array_name","file_name_from_index"]};

@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"struct":["ColPivQr","Eigen","FullPivLu","Lblt","Ldlt","Llt","PartialPivLu","Qr","SelfAdjointEigen","Svd"],"trait":["DenseSolve","DenseSolveCore","ShapeCore","Solve","SolveCore","SolveLstsq","SolveLstsqCore"]};
