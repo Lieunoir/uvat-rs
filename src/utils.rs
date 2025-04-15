@@ -1037,10 +1037,4 @@ pub fn compute_tutte_parameterization<I: MyIndex>(
     rhs.row_iter()
         .map(|row| [row[0] as f64, row[1] as f64])
         .collect()
-    //let verts2d: Vec<_> = rhs
-    //    .row_iter()
-    //    .map(|row| [row[0] as f32, row[1] as f32])
-    //    .collect();
-
-    //f.as_flattened().iter().map(|&i| verts2d[i.zx()]).collect()
 }
