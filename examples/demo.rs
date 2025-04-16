@@ -1,7 +1,7 @@
 use core::f32;
 use core::f64;
 use deuxfleurs::types::SurfaceIndices;
-use deuxfleurs::{create_window, egui, Color, State};
+use deuxfleurs::{egui, Color, State, StateWrapper};
 use uvat_rs::utils::{build_edge_map, compute_tutte_parameterization, get_boundary_loop};
 use uvat_rs::{UVATOptions, UVAT};
 
@@ -95,7 +95,7 @@ pub fn run() {
     };
 
     let init = |_state: &mut State| {};
-    create_window(
+    StateWrapper::run(
         1080,
         720,
         deuxfleurs::Settings {
