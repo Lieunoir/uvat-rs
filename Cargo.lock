@@ -638,7 +638,7 @@ dependencies = [
 [[package]]
 name = "deuxfleurs"
 version = "0.1.0"
-source = "git+https://github.com/Lieunoir/deuxfleurs#5e5c1fd38afa9b9b8ca6261bcf82ad10c77fb429"
+source = "git+https://github.com/Lieunoir/deuxfleurs#e60dadbc7f98b2e3dbee923643ee773d37084b1c"
 dependencies = [
  "ahash",
  "anyhow",
