@@ -36,12 +36,12 @@ pub fn run() {
         if ui.add(egui::Button::new("UVAT")).clicked() {
             if let Some(surface) = state.get_surface_mut("loaded mesh") {
                 let mut v: Vec<_> = surface
-                    .geometry
+                    .geometry()
                     .vertices
                     .iter()
                     .map(|row| [row[0] as f64, row[1] as f64, row[2] as f64])
                     .collect();
-                let f = &surface.geometry.indices;
+                let f = &surface.geometry().indices;
                 let mut f = match f {
                     SurfaceIndices::Triangles(f) => f.clone(),
                     _ => panic!(),
@@ -98,6 +98,7 @@ pub fn run() {
     StateBuilder::run(
         1080,
         720,
+        None,
         deuxfleurs::Settings {
             color: Color {
                 r: 1.0,
@@ -107,7 +108,7 @@ pub fn run() {
             },
             ..Default::default()
         },
-        Some(init),
-        Some(callback),
+        init,
+        callback,
     );
 }

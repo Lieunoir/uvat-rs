@@ -10,4 +10,4 @@ pulp = "0.18"
 rayon = "1.10"
 
 [dev-dependencies]
-deuxfleurs = { git = "https://github.com/Lieunoir/deuxfleurs" }
+deuxfleurs = { git = "https://github.com/Lieunoir/deuxfleurs", rev = "89f5438" }
