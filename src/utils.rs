@@ -2,7 +2,7 @@ use faer::linalg::solvers::Solve;
 use faer::reborrow::ReborrowMut;
 use faer::sparse::{SparseColMat, SymbolicSparseColMat, Triplet};
 use faer::{ColMut, Index, Mat, MatMut, Row};
-use faer_traits::Index as tIndex;
+use faer_traits::IndexCore;
 use pulp::Arch;
 use rayon::prelude::*;
 use std::collections::VecDeque;
