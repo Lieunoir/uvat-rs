@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["Mat","MatMut","MatRef"],"trait":["AsMat","AsMatMut","AsMatRef","MatIndex"]};
+window.SIDEBAR_ITEMS = {"mod":["generic"],"struct":["Mut","Own","Ref"],"trait":["AsMat","AsMatMut","AsMatRef","MatIndex"],"type":["Mat","MatMut","MatRef"]};

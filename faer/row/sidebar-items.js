@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["Row","RowMut","RowRef"],"trait":["AsRowMut","AsRowRef","RowIndex"]};
+window.SIDEBAR_ITEMS = {"mod":["generic"],"struct":["Mut","Own","Ref"],"trait":["AsRowMut","AsRowRef","RowIndex"],"type":["Row","RowMut","RowRef"]};

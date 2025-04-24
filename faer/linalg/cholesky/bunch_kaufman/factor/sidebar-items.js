@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["PivotingStrategy"],"fn":["cholesky_in_place","cholesky_in_place_scratch"],"struct":["BunchKaufmanInfo","BunchKaufmanParams","BunchKaufmanRegularization"]};

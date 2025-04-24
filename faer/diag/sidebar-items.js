@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["Diag","DiagMut","DiagRef"],"trait":["AsDiagMut","AsDiagRef"]};
+window.SIDEBAR_ITEMS = {"mod":["generic"],"struct":["Mut","Own","Ref"],"trait":["AsDiagMut","AsDiagRef"],"type":["Diag","DiagMut","DiagRef"]};

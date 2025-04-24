@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["bunch_kaufman","ldlt","llt","llt_pivoting"]};
+window.SIDEBAR_ITEMS = {"mod":["lblt","ldlt","llt","llt_pivoting"]};

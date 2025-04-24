@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["default"],"macro":["mat"]};
+window.SIDEBAR_ITEMS = {"fn":["default"],"macro":["col","mat","row","unzip","zip"]};

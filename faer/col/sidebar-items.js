@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["Col","ColMut","ColRef"],"trait":["AsColMut","AsColRef","ColIndex"]};
+window.SIDEBAR_ITEMS = {"mod":["generic"],"struct":["Mut","Own","Ref"],"trait":["AsColMut","AsColRef","ColIndex"],"type":["Col","ColMut","ColRef"]};
