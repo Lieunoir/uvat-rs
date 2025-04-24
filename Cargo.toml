@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-faer = "0.22"
+faer = "0.22.4"
 faer-traits = "0.22"
 pulp = "0.18"
 rayon = "1.10"

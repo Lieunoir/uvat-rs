@@ -1013,7 +1013,6 @@ pub fn build_mass_cotan_laplacian_intrinsic<I: Index>(
         }
     }
 
-    #[cfg(not(target_arch = "wasm32"))]
     let (indices, coeffs): (Vec<_>, Vec<_>) = indices.into_iter().unzip();
 
     let mut coeffs_m = vec![0.; nv];
