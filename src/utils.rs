@@ -9,6 +9,7 @@ use std::collections::VecDeque;
 use std::f64::consts::PI;
 use std::ops::{BitAnd, Mul, Shl, Shr};
 use std::sync::atomic::{AtomicI8, AtomicU32, AtomicU64, Ordering};
+use std::sync::Mutex;
 
 /// Index trait encompassing operations from `faer`'s Index trait and some more.
 pub trait MyIndex:
@@ -866,7 +867,7 @@ pub fn build_mass_cotan_laplacian_intrinsic<I: Index>(
         }
     }
     let mut offset = 0_usize;
-    let offsets: Vec<I> = deg
+    let mut offsets: Vec<I> = deg
         .iter()
         .map(|deg| {
             offset += *deg as usize + 1;
@@ -949,6 +950,7 @@ pub fn build_mass_cotan_laplacian_intrinsic<I: Index>(
         })
         .collect();
 
+    let duplicates = Mutex::new(Vec::new());
     rayon::iter::split(
         SubSlices {
             idx: &offsets,
@@ -960,10 +962,58 @@ pub fn build_mass_cotan_laplacian_intrinsic<I: Index>(
         let r = s.idx[0];
         for offs in s.idx.windows(2) {
             let slice = &mut s.data[(offs[0] - r).zx()..(offs[1] - r).zx()];
+            let vertex = slice[0].0;
             slice[0].1 = -slice[1..].iter().fold(0., |acc, x| acc + x.1);
             slice.sort_unstable_by_key(|item| item.0);
+
+            for (i, win) in slice.windows(2).enumerate() {
+                if win[0].0 == win[1].0 {
+                    duplicates
+                        .lock()
+                        .unwrap()
+                        .push((offs[0] + I::truncate(i), vertex));
+                }
+            }
         }
     });
+
+    if let Ok(mut duplicates) = duplicates.lock() {
+        if !duplicates.is_empty() {
+            println!("Found duplicates ! {}", duplicates.len());
+            duplicates.sort_unstable_by_key(|item| item.0);
+            let mut offset = 0;
+            'outer: for i in 0..indices.len() {
+                let normal = I::truncate(i + offset) != duplicates[offset].0;
+                while I::truncate(i + offset) == duplicates[offset].0 {
+                    indices[i + offset].1 += indices[i + offset + 1].1;
+                    indices[i + offset + 1].1 = indices[i + offset].1;
+                    indices[i] = indices[i + offset];
+                    offset += 1;
+                    if offset == duplicates.len() {
+                        for j in (i + 1)..(indices.len() - offset) {
+                            indices[j] = indices[j + offset];
+                        }
+                        break 'outer;
+                    }
+                }
+                if normal {
+                    indices[i] = indices[i + offset];
+                }
+            }
+            indices.truncate(indices.len() - duplicates.len());
+
+            duplicates.sort_unstable_by_key(|item| item.1);
+            let mut offset = I::truncate(0);
+            for i in 0..offsets.len() {
+                offsets[i] -= offset;
+                while offset.zx() < duplicates.len() && i == duplicates[offset.zx()].1.zx() {
+                    offset += I::truncate(1);
+                }
+            }
+        }
+    }
+
+    #[cfg(not(target_arch = "wasm32"))]
     let (indices, coeffs): (Vec<_>, Vec<_>) = indices.into_iter().unzip();
 
     let mut coeffs_m = vec![0.; nv];
