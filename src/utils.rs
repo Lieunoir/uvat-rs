@@ -8,7 +8,7 @@ use rayon::prelude::*;
 use std::collections::VecDeque;
 use std::f64::consts::PI;
 use std::ops::{BitAnd, Mul, Shl, Shr};
-use std::sync::atomic::{AtomicI8, AtomicU32, AtomicU64, Ordering};
+use std::sync::atomic::{AtomicI8, AtomicU32, AtomicU64, AtomicUsize, Ordering};
 use std::sync::Mutex;
 
 /// Index trait encompassing operations from `faer`'s Index trait and some more.
@@ -19,14 +19,50 @@ pub trait MyIndex:
     + BitAnd<Output = Self>
     + Mul<Output = Self>
 {
+    type Atomic: Sync;
+
+    fn slice_to_atomic_slice(v: &mut [Self]) -> &[Self::Atomic];
+
+    fn write_to_atomic(self, atomic: &Self::Atomic);
 }
 
-impl MyIndex for u32 {}
+impl MyIndex for u32 {
+    type Atomic = AtomicU32;
+    fn slice_to_atomic_slice(v: &mut [Self]) -> &[Self::Atomic] {
+        let [] = [(); align_of::<Self::Atomic>() - align_of::<Self>()];
+        unsafe { &*(v as *mut [Self] as *const [Self::Atomic]) }
+    }
+
+    fn write_to_atomic(self, atomic: &Self::Atomic) {
+        atomic.store(self, std::sync::atomic::Ordering::Relaxed);
+    }
+}
 
 #[cfg(not(target_arch = "wasm32"))]
-impl MyIndex for u64 {}
+impl MyIndex for u64 {
+    type Atomic = AtomicU64;
 
-impl MyIndex for usize {}
+    fn slice_to_atomic_slice(v: &mut [Self]) -> &[Self::Atomic] {
+        let [] = [(); align_of::<Self::Atomic>() - align_of::<Self>()];
+        unsafe { &*(v as *mut [Self] as *const [Self::Atomic]) }
+    }
+
+    fn write_to_atomic(self, atomic: &Self::Atomic) {
+        atomic.store(self, std::sync::atomic::Ordering::Relaxed);
+    }
+}
+
+impl MyIndex for usize {
+    type Atomic = AtomicUsize;
+    fn slice_to_atomic_slice(v: &mut [Self]) -> &[Self::Atomic] {
+        let [] = [(); align_of::<Self::Atomic>() - align_of::<Self>()];
+        unsafe { &*(v as *mut [Self] as *const [Self::Atomic]) }
+    }
+
+    fn write_to_atomic(self, atomic: &Self::Atomic) {
+        atomic.store(self, std::sync::atomic::Ordering::Relaxed);
+    }
+}
 
 /// Apply constraints on matrix `l` and right hand side column vector `rhs`.
 /// Constraints are given by a list of indices `c_indices` and the values `c_values` :
@@ -396,6 +432,36 @@ impl<'a, 'b, T, I: Index> SubSlices<'a, 'b, T, I> {
             Some(Self {
                 idx: idx_l,
                 data: data_l,
+            }),
+        )
+    }
+}
+
+struct SubSlices2<'a, 'b, 'c, T, U, I: Index> {
+    idx: &'a [I],
+    data_1: &'b mut [T],
+    data_2: &'c mut [U],
+}
+
+impl<'a, 'b, 'c, T, U, I: Index> SubSlices2<'a, 'b, 'c, T, U, I> {
+    fn splitter(self) -> (Self, Option<Self>) {
+        if self.idx.len() <= 2 {
+            return (self, None);
+        }
+        let mid = self.idx.len() / 2;
+        let (idx_r, idx_l) = (&self.idx[0..mid + 1], &self.idx[mid..]);
+        let (data_1_r, data_1_l) = self.data_1.split_at_mut(idx_l[0].zx() - idx_r[0].zx());
+        let (data_2_r, data_2_l) = self.data_2.split_at_mut(idx_l[0].zx() - idx_r[0].zx());
+        (
+            Self {
+                idx: idx_r,
+                data_1: data_1_r,
+                data_2: data_2_r,
+            },
+            Some(Self {
+                idx: idx_l,
+                data_1: data_1_l,
+                data_2: data_2_l,
             }),
         )
     }
@@ -789,11 +855,16 @@ pub fn build_intrinsic_delaunay<
     (lengths, f, e)
 }
 
+pub fn atomic_from_mut_slice_f64(v: &mut [f64]) -> &[AtomicU64] {
+    let [] = [(); align_of::<AtomicU64>() - align_of::<f64>()];
+    unsafe { &*(v as *mut [f64] as *const [AtomicU64]) }
+}
+
 /// Build mass and stiffness matrices for the intrinsic Laplacian, from the intrinsic Delaunay triangulation
 /// (as precomputed by [`build_intrinsic_delaunay`]).
 ///
 /// Slightly overkill for Tutte parameterization.
-pub fn build_mass_cotan_laplacian_intrinsic<I: Index>(
+pub fn build_mass_cotan_laplacian_intrinsic<I: MyIndex>(
     lengths: &[[f64; 3]],
     f: &[[I; 3]],
     e: &[([I; 3], [i8; 3])],
@@ -875,12 +946,13 @@ pub fn build_mass_cotan_laplacian_intrinsic<I: Index>(
         })
         .collect();
 
-    let indices: Vec<_> = vec![(0_u32, 0_u64); offset]
-        .into_iter()
-        .map(|(v1, v2)| (AtomicU32::from(v1 as u32), AtomicU64::from(v2)))
-        .collect();
+    let mut indices: Vec<_> = vec![I::truncate(0); offset];
+    let mut values: Vec<_> = vec![0_f64; offset];
+    //let atomic_indices = atomic_from_mut_slice_index(&mut indices);
+    let atomic_indices = I::slice_to_atomic_slice(&mut indices);
+    let atomic_values = atomic_from_mut_slice_f64(&mut values);
 
-    f.into_par_iter()
+    f.par_iter()
         .zip(sum_cots.into_par_iter())
         .zip(faces_offsets.par_chunks_exact(6))
         .for_each(|((face, cots), off)| {
@@ -888,49 +960,31 @@ pub fn build_mass_cotan_laplacian_intrinsic<I: Index>(
             let cotan1 = cots[1];
             let cotan2 = cots[2];
             if off[0] > 0 {
-                indices[offsets[face[0].zx()].zx() + off[0] as usize]
-                    .0
-                    .store(face[1].zx() as u32, Ordering::Relaxed);
-                indices[offsets[face[0].zx()].zx() + off[0] as usize]
-                    .1
-                    .store((-cotan2).to_bits(), Ordering::Relaxed);
+                let idx1 = offsets[face[0].zx()].zx() + off[0] as usize;
+                let idx2 = offsets[face[1].zx()].zx() + off[1] as usize;
+                face[1].write_to_atomic(&atomic_indices[idx1]);
+                atomic_values[idx1].store((-cotan2).to_bits(), Ordering::Relaxed);
 
-                indices[offsets[face[1].zx()].zx() + off[1] as usize]
-                    .0
-                    .store(face[0].zx() as u32, Ordering::Relaxed);
-                indices[offsets[face[1].zx()].zx() + off[1] as usize]
-                    .1
-                    .store((-cotan2).to_bits(), Ordering::Relaxed);
+                face[0].write_to_atomic(&atomic_indices[idx2]);
+                atomic_values[idx2].store((-cotan2).to_bits(), Ordering::Relaxed);
             }
             if off[2] > 0 {
-                indices[offsets[face[1].zx()].zx() + off[2] as usize]
-                    .0
-                    .store(face[2].zx() as u32, Ordering::Relaxed);
-                indices[offsets[face[1].zx()].zx() + off[2] as usize]
-                    .1
-                    .store((-cotan0).to_bits(), Ordering::Relaxed);
+                let idx1 = offsets[face[1].zx()].zx() + off[2] as usize;
+                let idx2 = offsets[face[2].zx()].zx() + off[3] as usize;
+                face[2].write_to_atomic(&atomic_indices[idx1]);
+                atomic_values[idx1].store((-cotan0).to_bits(), Ordering::Relaxed);
 
-                indices[offsets[face[2].zx()].zx() + off[3] as usize]
-                    .0
-                    .store(face[1].zx() as u32, Ordering::Relaxed);
-                indices[offsets[face[2].zx()].zx() + off[3] as usize]
-                    .1
-                    .store((-cotan0).to_bits(), Ordering::Relaxed);
+                face[1].write_to_atomic(&atomic_indices[idx2]);
+                atomic_values[idx2].store((-cotan0).to_bits(), Ordering::Relaxed);
             }
             if off[4] > 0 {
-                indices[offsets[face[2].zx()].zx() + off[4] as usize]
-                    .0
-                    .store(face[0].zx() as u32, Ordering::Relaxed);
-                indices[offsets[face[2].zx()].zx() + off[4] as usize]
-                    .1
-                    .store((-cotan1).to_bits(), Ordering::Relaxed);
+                let idx1 = offsets[face[2].zx()].zx() + off[4] as usize;
+                let idx2 = offsets[face[0].zx()].zx() + off[5] as usize;
+                face[0].write_to_atomic(&atomic_indices[idx1]);
+                atomic_values[idx1].store((-cotan1).to_bits(), Ordering::Relaxed);
 
-                indices[offsets[face[0].zx()].zx() + off[5] as usize]
-                    .0
-                    .store(face[2].zx() as u32, Ordering::Relaxed);
-                indices[offsets[face[0].zx()].zx() + off[5] as usize]
-                    .1
-                    .store((-cotan1).to_bits(), Ordering::Relaxed);
+                face[2].write_to_atomic(&atomic_indices[idx2]);
+                atomic_values[idx2].store((-cotan1).to_bits(), Ordering::Relaxed);
             }
         });
 
@@ -938,36 +992,43 @@ pub fn build_mass_cotan_laplacian_intrinsic<I: Index>(
         .par_iter()
         .enumerate()
         .for_each(|(i, off)| {
-            indices[off.zx()].0.store(i as u32, Ordering::Relaxed);
+            I::truncate(i).write_to_atomic(&atomic_indices[off.zx()]);
         });
-    let mut indices: Vec<_> = indices
-        .into_iter()
-        .map(|(i, v)| {
-            (
-                I::truncate(i.into_inner() as usize),
-                f64::from_bits(v.into_inner()),
-            )
-        })
-        .collect();
+
+    fn insertion_sort<T: Copy + PartialOrd, U: Copy>(data_1: &mut [T], data_2: &mut [U]) {
+        for i in 1..data_1.len() {
+            let aux = data_1[i];
+            let aux_2 = data_2[i];
+            let mut j = i;
+            while j > 0 && data_1[j - 1] > aux {
+                data_1[j] = data_1[j - 1];
+                data_2[j] = data_2[j - 1];
+                j -= 1;
+            }
+            data_1[j] = aux;
+            data_2[j] = aux_2;
+        }
+    }
 
     let duplicates = Mutex::new(Vec::new());
     rayon::iter::split(
-        SubSlices {
+        SubSlices2 {
             idx: &offsets,
-            data: &mut indices,
+            data_1: &mut indices,
+            data_2: &mut values,
         },
-        SubSlices::splitter,
+        SubSlices2::splitter,
     )
     .for_each(|s| {
         let r = s.idx[0];
         for offs in s.idx.windows(2) {
-            let slice = &mut s.data[(offs[0] - r).zx()..(offs[1] - r).zx()];
-            let vertex = slice[0].0;
-            slice[0].1 = -slice[1..].iter().fold(0., |acc, x| acc + x.1);
-            slice.sort_unstable_by_key(|item| item.0);
-
-            for (i, win) in slice.windows(2).enumerate() {
-                if win[0].0 == win[1].0 {
+            let slice_i = &mut s.data_1[(offs[0] - r).zx()..(offs[1] - r).zx()];
+            let slice_v = &mut s.data_2[(offs[0] - r).zx()..(offs[1] - r).zx()];
+            let vertex = slice_i[0];
+            slice_v[0] = -slice_v[1..].iter().fold(0., |acc, x| acc + x);
+            insertion_sort(slice_i, slice_v);
+            for (i, win) in slice_i.windows(2).enumerate() {
+                if win[0] == win[1] {
                     duplicates
                         .lock()
                         .unwrap()
@@ -985,22 +1046,26 @@ pub fn build_mass_cotan_laplacian_intrinsic<I: Index>(
             'outer: for i in 0..indices.len() {
                 let normal = I::truncate(i + offset) != duplicates[offset].0;
                 while I::truncate(i + offset) == duplicates[offset].0 {
-                    indices[i + offset].1 += indices[i + offset + 1].1;
-                    indices[i + offset + 1].1 = indices[i + offset].1;
+                    values[i + offset] += values[i + offset + 1];
+                    values[i + offset + 1] = values[i + offset];
                     indices[i] = indices[i + offset];
+                    values[i] = values[i + offset];
                     offset += 1;
                     if offset == duplicates.len() {
                         for j in (i + 1)..(indices.len() - offset) {
                             indices[j] = indices[j + offset];
+                            values[j] = values[j + offset];
                         }
                         break 'outer;
                     }
                 }
                 if normal {
                     indices[i] = indices[i + offset];
+                    values[i] = values[i + offset];
                 }
             }
             indices.truncate(indices.len() - duplicates.len());
+            values.truncate(values.len() - duplicates.len());
 
             duplicates.sort_unstable_by_key(|item| item.1);
             let mut offset = I::truncate(0);
@@ -1012,8 +1077,6 @@ pub fn build_mass_cotan_laplacian_intrinsic<I: Index>(
             }
         }
     }
-
-    let (indices, coeffs): (Vec<_>, Vec<_>) = indices.into_iter().unzip();
 
     let mut coeffs_m = vec![0.; nv];
     for ((row, l), cot) in f.into_iter().zip(lengths.iter()).zip(cots) {
@@ -1042,7 +1105,7 @@ pub fn build_mass_cotan_laplacian_intrinsic<I: Index>(
     let symbolic = unsafe { SymbolicSparseColMat::new_unchecked(nv, nv, offsets, None, indices) };
     (
         SparseColMat::<I, f64>::try_new_from_triplets(nv, nv, &triplets_m).unwrap(),
-        SparseColMat::<I, f64>::new(symbolic, coeffs),
+        SparseColMat::<I, f64>::new(symbolic, values),
     )
 }
 
