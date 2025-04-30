@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/faer-0.22.4/src/linalg/mat_ops.rs`."><title>mat_ops.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c233d2bd.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="faer" data-themes="" data-resource-suffix="" data-rustdoc-version="1.88.0-nightly (d7ea436a0 2025-04-24)" data-channel="nightly" data-search-js="search-f7877310.js" data-settings-js="settings-5514c975.js" ><script src="../../../static.files/storage-4e99c027.js"></script><script defer src="../../../static.files/src-script-63605ae7.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-7ef8a74a.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">faer/linalg/</div>mat_ops.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-4"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="kw">use </span><span class="kw">crate</span>::internal_prelude::<span class="kw-2">*</span>;
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/faer-0.22.6/src/linalg/mat_ops.rs`."><title>mat_ops.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-20739d33.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="faer" data-themes="" data-resource-suffix="" data-rustdoc-version="1.88.0-nightly (74509131e 2025-04-29)" data-channel="nightly" data-search-js="search-f7877310.js" data-settings-js="settings-5514c975.js" ><script src="../../../static.files/storage-4e99c027.js"></script><script defer src="../../../static.files/src-script-63605ae7.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-7ef8a74a.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">faer/linalg/</div>mat_ops.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-4"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="kw">use </span><span class="kw">crate</span>::internal_prelude::<span class="kw-2">*</span>;
 <a href=#2 id=2 data-nosnippet>2</a><span class="kw">use crate</span>::{Scale, assert, col, diag, get_global_parallelism, mat, perm, row};
 <a href=#3 id=3 data-nosnippet>3</a><span class="kw">use </span>core::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 <a href=#4 id=4 data-nosnippet>4</a>
@@ -576,7 +576,7 @@
 <a href=#576 id=576 data-nosnippet>576</a>			<span class="attr">#[track_caller]
 <a href=#577 id=577 data-nosnippet>577</a>			</span><span class="kw">fn </span>imp&lt;T: ComplexField, LT: Conjugate&lt;Canonical = T&gt;, RT: Conjugate&lt;Canonical = T&gt;&gt;(lhs: RowRef&lt;<span class="lifetime">'_</span>, LT&gt;, rhs: RowRef&lt;<span class="lifetime">'_</span>, RT&gt;) -&gt; Row&lt;T&gt; {
 <a href=#578 id=578 data-nosnippet>578</a>				<span class="macro">assert!</span>(all(lhs.nrows() == rhs.nrows(), lhs.ncols() == rhs.ncols()));
-<a href=#579 id=579 data-nosnippet>579</a>				(lhs.transpose() + rhs.transpose()).into_transpose()
+<a href=#579 id=579 data-nosnippet>579</a>				(lhs.transpose() - rhs.transpose()).into_transpose()
 <a href=#580 id=580 data-nosnippet>580</a>			}
 <a href=#581 id=581 data-nosnippet>581</a>			<span class="kw">let </span>lhs = <span class="self">self</span>.rb();
 <a href=#582 id=582 data-nosnippet>582</a>			imp(lhs.as_dyn_cols().as_dyn_stride(), rhs.rb().as_dyn_cols().as_dyn_stride()).into_col_shape(lhs.ncols())
@@ -3623,154 +3623,240 @@
 <a href=#3623 id=3623 data-nosnippet>3623</a>		(A, B)
 <a href=#3624 id=3624 data-nosnippet>3624</a>	}
 <a href=#3625 id=3625 data-nosnippet>3625</a>
-<a href=#3626 id=3626 data-nosnippet>3626</a>	<span class="attr">#[test]
-<a href=#3627 id=3627 data-nosnippet>3627</a>	#[should_panic]
-<a href=#3628 id=3628 data-nosnippet>3628</a>	</span><span class="kw">fn </span>test_adding_matrices_of_different_sizes_should_panic() {
-<a href=#3629 id=3629 data-nosnippet>3629</a>		<span class="kw">let </span>A = <span class="macro">mat!</span>[[<span class="number">1.0</span>, <span class="number">2.0</span>], [<span class="number">3.0</span>, <span class="number">4.0</span>]];
-<a href=#3630 id=3630 data-nosnippet>3630</a>		<span class="kw">let </span>B = <span class="macro">mat!</span>[[<span class="number">1.0</span>, <span class="number">2.0</span>, <span class="number">3.0</span>], [<span class="number">4.0</span>, <span class="number">5.0</span>, <span class="number">6.0</span>]];
-<a href=#3631 id=3631 data-nosnippet>3631</a>		<span class="kw">_ </span>= A + B;
+<a href=#3626 id=3626 data-nosnippet>3626</a>	<span class="kw">fn </span>rows() -&gt; (Row&lt;f64&gt;, Row&lt;f64&gt;) {
+<a href=#3627 id=3627 data-nosnippet>3627</a>		(<span class="macro">row!</span>[<span class="number">2.8</span>, -<span class="number">3.3</span>], <span class="macro">row!</span>[-<span class="number">7.9</span>, <span class="number">8.3</span>])
+<a href=#3628 id=3628 data-nosnippet>3628</a>	}
+<a href=#3629 id=3629 data-nosnippet>3629</a>
+<a href=#3630 id=3630 data-nosnippet>3630</a>	<span class="kw">fn </span>cols() -&gt; (Col&lt;f64&gt;, Col&lt;f64&gt;) {
+<a href=#3631 id=3631 data-nosnippet>3631</a>		(<span class="macro">col!</span>[<span class="number">2.8</span>, -<span class="number">3.3</span>], <span class="macro">col!</span>[-<span class="number">7.9</span>, <span class="number">8.3</span>])
 <a href=#3632 id=3632 data-nosnippet>3632</a>	}
 <a href=#3633 id=3633 data-nosnippet>3633</a>
 <a href=#3634 id=3634 data-nosnippet>3634</a>	<span class="attr">#[test]
 <a href=#3635 id=3635 data-nosnippet>3635</a>	#[should_panic]
-<a href=#3636 id=3636 data-nosnippet>3636</a>	</span><span class="kw">fn </span>test_subtracting_two_matrices_of_different_sizes_should_panic() {
+<a href=#3636 id=3636 data-nosnippet>3636</a>	</span><span class="kw">fn </span>test_adding_matrices_of_different_sizes_should_panic() {
 <a href=#3637 id=3637 data-nosnippet>3637</a>		<span class="kw">let </span>A = <span class="macro">mat!</span>[[<span class="number">1.0</span>, <span class="number">2.0</span>], [<span class="number">3.0</span>, <span class="number">4.0</span>]];
 <a href=#3638 id=3638 data-nosnippet>3638</a>		<span class="kw">let </span>B = <span class="macro">mat!</span>[[<span class="number">1.0</span>, <span class="number">2.0</span>, <span class="number">3.0</span>], [<span class="number">4.0</span>, <span class="number">5.0</span>, <span class="number">6.0</span>]];
-<a href=#3639 id=3639 data-nosnippet>3639</a>		<span class="kw">_ </span>= A - B;
+<a href=#3639 id=3639 data-nosnippet>3639</a>		<span class="kw">_ </span>= A + B;
 <a href=#3640 id=3640 data-nosnippet>3640</a>	}
 <a href=#3641 id=3641 data-nosnippet>3641</a>
 <a href=#3642 id=3642 data-nosnippet>3642</a>	<span class="attr">#[test]
-<a href=#3643 id=3643 data-nosnippet>3643</a>	</span><span class="kw">fn </span>test_add() {
-<a href=#3644 id=3644 data-nosnippet>3644</a>		<span class="kw">let </span>(A, B) = matrices();
-<a href=#3645 id=3645 data-nosnippet>3645</a>
-<a href=#3646 id=3646 data-nosnippet>3646</a>		<span class="kw">let </span>expected = <span class="macro">mat!</span>[[-<span class="number">5.1</span>, <span class="number">5.0</span>], [<span class="number">3.0</span>, <span class="number">2.0</span>], [<span class="number">8.4</span>, -<span class="number">13.5</span>],];
-<a href=#3647 id=3647 data-nosnippet>3647</a>
-<a href=#3648 id=3648 data-nosnippet>3648</a>		assert_matrix_approx_eq(A.as_ref() + B.as_ref(), <span class="kw-2">&amp;</span>expected);
-<a href=#3649 id=3649 data-nosnippet>3649</a>		assert_matrix_approx_eq(<span class="kw-2">&amp;</span>A + <span class="kw-2">&amp;</span>B, <span class="kw-2">&amp;</span>expected);
-<a href=#3650 id=3650 data-nosnippet>3650</a>		assert_matrix_approx_eq(A.as_ref() + <span class="kw-2">&amp;</span>B, <span class="kw-2">&amp;</span>expected);
-<a href=#3651 id=3651 data-nosnippet>3651</a>		assert_matrix_approx_eq(<span class="kw-2">&amp;</span>A + B.as_ref(), <span class="kw-2">&amp;</span>expected);
-<a href=#3652 id=3652 data-nosnippet>3652</a>		assert_matrix_approx_eq(A.as_ref() + B.clone(), <span class="kw-2">&amp;</span>expected);
-<a href=#3653 id=3653 data-nosnippet>3653</a>		assert_matrix_approx_eq(<span class="kw-2">&amp;</span>A + B.clone(), <span class="kw-2">&amp;</span>expected);
-<a href=#3654 id=3654 data-nosnippet>3654</a>		assert_matrix_approx_eq(A.clone() + B.as_ref(), <span class="kw-2">&amp;</span>expected);
-<a href=#3655 id=3655 data-nosnippet>3655</a>		assert_matrix_approx_eq(A.clone() + <span class="kw-2">&amp;</span>B, <span class="kw-2">&amp;</span>expected);
-<a href=#3656 id=3656 data-nosnippet>3656</a>		assert_matrix_approx_eq(A + B, <span class="kw-2">&amp;</span>expected);
-<a href=#3657 id=3657 data-nosnippet>3657</a>	}
-<a href=#3658 id=3658 data-nosnippet>3658</a>
-<a href=#3659 id=3659 data-nosnippet>3659</a>	<span class="attr">#[test]
-<a href=#3660 id=3660 data-nosnippet>3660</a>	</span><span class="kw">fn </span>test_sub() {
-<a href=#3661 id=3661 data-nosnippet>3661</a>		<span class="kw">let </span>(A, B) = matrices();
-<a href=#3662 id=3662 data-nosnippet>3662</a>
-<a href=#3663 id=3663 data-nosnippet>3663</a>		<span class="kw">let </span>expected = <span class="macro">mat!</span>[[<span class="number">10.7</span>, -<span class="number">11.6</span>], [-<span class="number">6.4</span>, <span class="number">8.4</span>], [<span class="number">0.8</span>, -<span class="number">3.1</span>],];
-<a href=#3664 id=3664 data-nosnippet>3664</a>
-<a href=#3665 id=3665 data-nosnippet>3665</a>		assert_matrix_approx_eq(A.as_ref() - B.as_ref(), <span class="kw-2">&amp;</span>expected);
-<a href=#3666 id=3666 data-nosnippet>3666</a>		assert_matrix_approx_eq(<span class="kw-2">&amp;</span>A - <span class="kw-2">&amp;</span>B, <span class="kw-2">&amp;</span>expected);
-<a href=#3667 id=3667 data-nosnippet>3667</a>		assert_matrix_approx_eq(A.as_ref() - <span class="kw-2">&amp;</span>B, <span class="kw-2">&amp;</span>expected);
-<a href=#3668 id=3668 data-nosnippet>3668</a>		assert_matrix_approx_eq(<span class="kw-2">&amp;</span>A - B.as_ref(), <span class="kw-2">&amp;</span>expected);
-<a href=#3669 id=3669 data-nosnippet>3669</a>		assert_matrix_approx_eq(A.as_ref() - B.clone(), <span class="kw-2">&amp;</span>expected);
-<a href=#3670 id=3670 data-nosnippet>3670</a>		assert_matrix_approx_eq(<span class="kw-2">&amp;</span>A - B.clone(), <span class="kw-2">&amp;</span>expected);
-<a href=#3671 id=3671 data-nosnippet>3671</a>		assert_matrix_approx_eq(A.clone() - B.as_ref(), <span class="kw-2">&amp;</span>expected);
-<a href=#3672 id=3672 data-nosnippet>3672</a>		assert_matrix_approx_eq(A.clone() - <span class="kw-2">&amp;</span>B, <span class="kw-2">&amp;</span>expected);
-<a href=#3673 id=3673 data-nosnippet>3673</a>		assert_matrix_approx_eq(A - B, <span class="kw-2">&amp;</span>expected);
-<a href=#3674 id=3674 data-nosnippet>3674</a>	}
-<a href=#3675 id=3675 data-nosnippet>3675</a>
-<a href=#3676 id=3676 data-nosnippet>3676</a>	<span class="attr">#[test]
-<a href=#3677 id=3677 data-nosnippet>3677</a>	</span><span class="kw">fn </span>test_neg() {
-<a href=#3678 id=3678 data-nosnippet>3678</a>		<span class="kw">let </span>(A, <span class="kw">_</span>) = matrices();
-<a href=#3679 id=3679 data-nosnippet>3679</a>
-<a href=#3680 id=3680 data-nosnippet>3680</a>		<span class="kw">let </span>expected = <span class="macro">mat!</span>[[-<span class="number">2.8</span>, <span class="number">3.3</span>], [<span class="number">1.7</span>, -<span class="number">5.2</span>], [-<span class="number">4.6</span>, <span class="number">8.3</span>],];
-<a href=#3681 id=3681 data-nosnippet>3681</a>
-<a href=#3682 id=3682 data-nosnippet>3682</a>		<span class="macro">assert!</span>(-A == expected);
-<a href=#3683 id=3683 data-nosnippet>3683</a>	}
-<a href=#3684 id=3684 data-nosnippet>3684</a>
-<a href=#3685 id=3685 data-nosnippet>3685</a>	<span class="attr">#[test]
-<a href=#3686 id=3686 data-nosnippet>3686</a>	</span><span class="kw">fn </span>test_scalar_mul() {
-<a href=#3687 id=3687 data-nosnippet>3687</a>		<span class="kw">use </span><span class="kw">crate</span>::Scale <span class="kw">as </span>scale;
-<a href=#3688 id=3688 data-nosnippet>3688</a>
-<a href=#3689 id=3689 data-nosnippet>3689</a>		<span class="kw">let </span>(A, <span class="kw">_</span>) = matrices();
-<a href=#3690 id=3690 data-nosnippet>3690</a>		<span class="kw">let </span>k = <span class="number">3.0</span>;
-<a href=#3691 id=3691 data-nosnippet>3691</a>		<span class="kw">let </span>expected = Mat::from_fn(A.nrows(), A.ncols(), |i, j| A.as_ref()[(i, j)] * k);
-<a href=#3692 id=3692 data-nosnippet>3692</a>
-<a href=#3693 id=3693 data-nosnippet>3693</a>		{
-<a href=#3694 id=3694 data-nosnippet>3694</a>			assert_matrix_approx_eq(A.as_ref() * scale(k), <span class="kw-2">&amp;</span>expected);
-<a href=#3695 id=3695 data-nosnippet>3695</a>			assert_matrix_approx_eq(<span class="kw-2">&amp;</span>A * scale(k), <span class="kw-2">&amp;</span>expected);
-<a href=#3696 id=3696 data-nosnippet>3696</a>			assert_matrix_approx_eq(A.as_ref() * scale(k), <span class="kw-2">&amp;</span>expected);
-<a href=#3697 id=3697 data-nosnippet>3697</a>			assert_matrix_approx_eq(<span class="kw-2">&amp;</span>A * scale(k), <span class="kw-2">&amp;</span>expected);
-<a href=#3698 id=3698 data-nosnippet>3698</a>			assert_matrix_approx_eq(A.as_ref() * scale(k), <span class="kw-2">&amp;</span>expected);
-<a href=#3699 id=3699 data-nosnippet>3699</a>			assert_matrix_approx_eq(<span class="kw-2">&amp;</span>A * scale(k), <span class="kw-2">&amp;</span>expected);
-<a href=#3700 id=3700 data-nosnippet>3700</a>			assert_matrix_approx_eq(A.clone() * scale(k), <span class="kw-2">&amp;</span>expected);
-<a href=#3701 id=3701 data-nosnippet>3701</a>			assert_matrix_approx_eq(A.clone() * scale(k), <span class="kw-2">&amp;</span>expected);
-<a href=#3702 id=3702 data-nosnippet>3702</a>			assert_matrix_approx_eq(A * scale(k), <span class="kw-2">&amp;</span>expected);
-<a href=#3703 id=3703 data-nosnippet>3703</a>		}
+<a href=#3643 id=3643 data-nosnippet>3643</a>	#[should_panic]
+<a href=#3644 id=3644 data-nosnippet>3644</a>	</span><span class="kw">fn </span>test_subtracting_two_matrices_of_different_sizes_should_panic() {
+<a href=#3645 id=3645 data-nosnippet>3645</a>		<span class="kw">let </span>A = <span class="macro">mat!</span>[[<span class="number">1.0</span>, <span class="number">2.0</span>], [<span class="number">3.0</span>, <span class="number">4.0</span>]];
+<a href=#3646 id=3646 data-nosnippet>3646</a>		<span class="kw">let </span>B = <span class="macro">mat!</span>[[<span class="number">1.0</span>, <span class="number">2.0</span>, <span class="number">3.0</span>], [<span class="number">4.0</span>, <span class="number">5.0</span>, <span class="number">6.0</span>]];
+<a href=#3647 id=3647 data-nosnippet>3647</a>		<span class="kw">_ </span>= A - B;
+<a href=#3648 id=3648 data-nosnippet>3648</a>	}
+<a href=#3649 id=3649 data-nosnippet>3649</a>
+<a href=#3650 id=3650 data-nosnippet>3650</a>	<span class="attr">#[test]
+<a href=#3651 id=3651 data-nosnippet>3651</a>	</span><span class="kw">fn </span>test_matrix_add() {
+<a href=#3652 id=3652 data-nosnippet>3652</a>		<span class="kw">let </span>(A, B) = matrices();
+<a href=#3653 id=3653 data-nosnippet>3653</a>
+<a href=#3654 id=3654 data-nosnippet>3654</a>		<span class="kw">let </span>expected = <span class="macro">mat!</span>[[-<span class="number">5.1</span>, <span class="number">5.0</span>], [<span class="number">3.0</span>, <span class="number">2.0</span>], [<span class="number">8.4</span>, -<span class="number">13.5</span>],];
+<a href=#3655 id=3655 data-nosnippet>3655</a>
+<a href=#3656 id=3656 data-nosnippet>3656</a>		assert_matrix_approx_eq(A.as_ref() + B.as_ref(), <span class="kw-2">&amp;</span>expected);
+<a href=#3657 id=3657 data-nosnippet>3657</a>		assert_matrix_approx_eq(<span class="kw-2">&amp;</span>A + <span class="kw-2">&amp;</span>B, <span class="kw-2">&amp;</span>expected);
+<a href=#3658 id=3658 data-nosnippet>3658</a>		assert_matrix_approx_eq(A.as_ref() + <span class="kw-2">&amp;</span>B, <span class="kw-2">&amp;</span>expected);
+<a href=#3659 id=3659 data-nosnippet>3659</a>		assert_matrix_approx_eq(<span class="kw-2">&amp;</span>A + B.as_ref(), <span class="kw-2">&amp;</span>expected);
+<a href=#3660 id=3660 data-nosnippet>3660</a>		assert_matrix_approx_eq(A.as_ref() + B.clone(), <span class="kw-2">&amp;</span>expected);
+<a href=#3661 id=3661 data-nosnippet>3661</a>		assert_matrix_approx_eq(<span class="kw-2">&amp;</span>A + B.clone(), <span class="kw-2">&amp;</span>expected);
+<a href=#3662 id=3662 data-nosnippet>3662</a>		assert_matrix_approx_eq(A.clone() + B.as_ref(), <span class="kw-2">&amp;</span>expected);
+<a href=#3663 id=3663 data-nosnippet>3663</a>		assert_matrix_approx_eq(A.clone() + <span class="kw-2">&amp;</span>B, <span class="kw-2">&amp;</span>expected);
+<a href=#3664 id=3664 data-nosnippet>3664</a>		assert_matrix_approx_eq(A + B, <span class="kw-2">&amp;</span>expected);
+<a href=#3665 id=3665 data-nosnippet>3665</a>	}
+<a href=#3666 id=3666 data-nosnippet>3666</a>
+<a href=#3667 id=3667 data-nosnippet>3667</a>	<span class="attr">#[test]
+<a href=#3668 id=3668 data-nosnippet>3668</a>	</span><span class="kw">fn </span>test_row_add() {
+<a href=#3669 id=3669 data-nosnippet>3669</a>		<span class="kw">let </span>(A, B) = rows();
+<a href=#3670 id=3670 data-nosnippet>3670</a>		<span class="kw">let </span>expected = <span class="macro">row!</span>[-<span class="number">5.1</span>, <span class="number">5.0</span>];
+<a href=#3671 id=3671 data-nosnippet>3671</a>
+<a href=#3672 id=3672 data-nosnippet>3672</a>		assert_row_approx_eq(A.as_ref() + B.as_ref(), <span class="kw-2">&amp;</span>expected);
+<a href=#3673 id=3673 data-nosnippet>3673</a>		assert_row_approx_eq(<span class="kw-2">&amp;</span>A + <span class="kw-2">&amp;</span>B, <span class="kw-2">&amp;</span>expected);
+<a href=#3674 id=3674 data-nosnippet>3674</a>		assert_row_approx_eq(A.as_ref() + <span class="kw-2">&amp;</span>B, <span class="kw-2">&amp;</span>expected);
+<a href=#3675 id=3675 data-nosnippet>3675</a>		assert_row_approx_eq(<span class="kw-2">&amp;</span>A + B.as_ref(), <span class="kw-2">&amp;</span>expected);
+<a href=#3676 id=3676 data-nosnippet>3676</a>		assert_row_approx_eq(A.as_ref() + B.clone(), <span class="kw-2">&amp;</span>expected);
+<a href=#3677 id=3677 data-nosnippet>3677</a>		assert_row_approx_eq(A.clone() + B.as_ref(), <span class="kw-2">&amp;</span>expected);
+<a href=#3678 id=3678 data-nosnippet>3678</a>		assert_row_approx_eq(<span class="kw-2">&amp;</span>A + B.clone(), <span class="kw-2">&amp;</span>expected);
+<a href=#3679 id=3679 data-nosnippet>3679</a>		assert_row_approx_eq(A.clone() + <span class="kw-2">&amp;</span>B, <span class="kw-2">&amp;</span>expected);
+<a href=#3680 id=3680 data-nosnippet>3680</a>		assert_row_approx_eq(A + B, <span class="kw-2">&amp;</span>expected);
+<a href=#3681 id=3681 data-nosnippet>3681</a>	}
+<a href=#3682 id=3682 data-nosnippet>3682</a>
+<a href=#3683 id=3683 data-nosnippet>3683</a>	<span class="attr">#[test]
+<a href=#3684 id=3684 data-nosnippet>3684</a>	</span><span class="kw">fn </span>test_col_add() {
+<a href=#3685 id=3685 data-nosnippet>3685</a>		<span class="kw">let </span>(A, B) = cols();
+<a href=#3686 id=3686 data-nosnippet>3686</a>		<span class="kw">let </span>expected = <span class="macro">col!</span>[-<span class="number">5.1</span>, <span class="number">5.0</span>];
+<a href=#3687 id=3687 data-nosnippet>3687</a>
+<a href=#3688 id=3688 data-nosnippet>3688</a>		assert_col_approx_eq(A.as_ref() + B.as_ref(), <span class="kw-2">&amp;</span>expected);
+<a href=#3689 id=3689 data-nosnippet>3689</a>		assert_col_approx_eq(<span class="kw-2">&amp;</span>A + <span class="kw-2">&amp;</span>B, <span class="kw-2">&amp;</span>expected);
+<a href=#3690 id=3690 data-nosnippet>3690</a>		assert_col_approx_eq(A.as_ref() + <span class="kw-2">&amp;</span>B, <span class="kw-2">&amp;</span>expected);
+<a href=#3691 id=3691 data-nosnippet>3691</a>		assert_col_approx_eq(<span class="kw-2">&amp;</span>A + B.as_ref(), <span class="kw-2">&amp;</span>expected);
+<a href=#3692 id=3692 data-nosnippet>3692</a>		assert_col_approx_eq(A.as_ref() + B.clone(), <span class="kw-2">&amp;</span>expected);
+<a href=#3693 id=3693 data-nosnippet>3693</a>		assert_col_approx_eq(A.clone() + B.as_ref(), <span class="kw-2">&amp;</span>expected);
+<a href=#3694 id=3694 data-nosnippet>3694</a>		assert_col_approx_eq(<span class="kw-2">&amp;</span>A + B.clone(), <span class="kw-2">&amp;</span>expected);
+<a href=#3695 id=3695 data-nosnippet>3695</a>		assert_col_approx_eq(A.clone() + <span class="kw-2">&amp;</span>B, <span class="kw-2">&amp;</span>expected);
+<a href=#3696 id=3696 data-nosnippet>3696</a>		assert_col_approx_eq(A + B, <span class="kw-2">&amp;</span>expected);
+<a href=#3697 id=3697 data-nosnippet>3697</a>	}
+<a href=#3698 id=3698 data-nosnippet>3698</a>
+<a href=#3699 id=3699 data-nosnippet>3699</a>	<span class="attr">#[test]
+<a href=#3700 id=3700 data-nosnippet>3700</a>	</span><span class="kw">fn </span>test_matrix_sub() {
+<a href=#3701 id=3701 data-nosnippet>3701</a>		<span class="kw">let </span>(A, B) = matrices();
+<a href=#3702 id=3702 data-nosnippet>3702</a>
+<a href=#3703 id=3703 data-nosnippet>3703</a>		<span class="kw">let </span>expected = <span class="macro">mat!</span>[[<span class="number">10.7</span>, -<span class="number">11.6</span>], [-<span class="number">6.4</span>, <span class="number">8.4</span>], [<span class="number">0.8</span>, -<span class="number">3.1</span>],];
 <a href=#3704 id=3704 data-nosnippet>3704</a>
-<a href=#3705 id=3705 data-nosnippet>3705</a>		<span class="kw">let </span>(A, <span class="kw">_</span>) = matrices();
-<a href=#3706 id=3706 data-nosnippet>3706</a>		{
-<a href=#3707 id=3707 data-nosnippet>3707</a>			assert_matrix_approx_eq(scale(k) * A.as_ref(), <span class="kw-2">&amp;</span>expected);
-<a href=#3708 id=3708 data-nosnippet>3708</a>			assert_matrix_approx_eq(scale(k) * <span class="kw-2">&amp;</span>A, <span class="kw-2">&amp;</span>expected);
-<a href=#3709 id=3709 data-nosnippet>3709</a>			assert_matrix_approx_eq(scale(k) * A.as_ref(), <span class="kw-2">&amp;</span>expected);
-<a href=#3710 id=3710 data-nosnippet>3710</a>			assert_matrix_approx_eq(scale(k) * <span class="kw-2">&amp;</span>A, <span class="kw-2">&amp;</span>expected);
-<a href=#3711 id=3711 data-nosnippet>3711</a>			assert_matrix_approx_eq(scale(k) * A.as_ref(), <span class="kw-2">&amp;</span>expected);
-<a href=#3712 id=3712 data-nosnippet>3712</a>			assert_matrix_approx_eq(scale(k) * <span class="kw-2">&amp;</span>A, <span class="kw-2">&amp;</span>expected);
-<a href=#3713 id=3713 data-nosnippet>3713</a>			assert_matrix_approx_eq(scale(k) * A.clone(), <span class="kw-2">&amp;</span>expected);
-<a href=#3714 id=3714 data-nosnippet>3714</a>			assert_matrix_approx_eq(scale(k) * A.clone(), <span class="kw-2">&amp;</span>expected);
-<a href=#3715 id=3715 data-nosnippet>3715</a>			assert_matrix_approx_eq(scale(k) * A, <span class="kw-2">&amp;</span>expected);
-<a href=#3716 id=3716 data-nosnippet>3716</a>		}
-<a href=#3717 id=3717 data-nosnippet>3717</a>	}
-<a href=#3718 id=3718 data-nosnippet>3718</a>
-<a href=#3719 id=3719 data-nosnippet>3719</a>	<span class="attr">#[test]
-<a href=#3720 id=3720 data-nosnippet>3720</a>	</span><span class="kw">fn </span>test_diag_mul() {
-<a href=#3721 id=3721 data-nosnippet>3721</a>		<span class="kw">let </span>(A, <span class="kw">_</span>) = matrices();
-<a href=#3722 id=3722 data-nosnippet>3722</a>		<span class="kw">let </span>diag_left = <span class="macro">mat!</span>[[<span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>], [<span class="number">0.0</span>, <span class="number">2.0</span>, <span class="number">0.0</span>], [<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">3.0</span>]];
-<a href=#3723 id=3723 data-nosnippet>3723</a>		<span class="kw">let </span>diag_right = <span class="macro">mat!</span>[[<span class="number">4.0</span>, <span class="number">0.0</span>], [<span class="number">0.0</span>, <span class="number">5.0</span>]];
-<a href=#3724 id=3724 data-nosnippet>3724</a>
-<a href=#3725 id=3725 data-nosnippet>3725</a>		<span class="macro">assert!</span>(<span class="kw-2">&amp;</span>diag_left * <span class="kw-2">&amp;</span>A == diag_left.as_ref().diagonal() * <span class="kw-2">&amp;</span>A);
-<a href=#3726 id=3726 data-nosnippet>3726</a>		<span class="macro">assert!</span>(<span class="kw-2">&amp;</span>A * <span class="kw-2">&amp;</span>diag_right == <span class="kw-2">&amp;</span>A * diag_right.as_ref().diagonal());
-<a href=#3727 id=3727 data-nosnippet>3727</a>	}
-<a href=#3728 id=3728 data-nosnippet>3728</a>
-<a href=#3729 id=3729 data-nosnippet>3729</a>	<span class="attr">#[test]
-<a href=#3730 id=3730 data-nosnippet>3730</a>	</span><span class="kw">fn </span>test_perm_mul() {
-<a href=#3731 id=3731 data-nosnippet>3731</a>		<span class="kw">let </span>A = Mat::from_fn(<span class="number">6</span>, <span class="number">5</span>, |i, j| (j + <span class="number">5 </span>* i) <span class="kw">as </span>f64);
-<a href=#3732 id=3732 data-nosnippet>3732</a>		<span class="kw">let </span>pl = Perm::&lt;usize&gt;::new_checked(Box::new([<span class="number">5</span>, <span class="number">1</span>, <span class="number">4</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">3</span>]), Box::new([<span class="number">3</span>, <span class="number">1</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">2</span>, <span class="number">0</span>]), <span class="number">6</span>);
-<a href=#3733 id=3733 data-nosnippet>3733</a>		<span class="kw">let </span>pr = Perm::&lt;usize&gt;::new_checked(Box::new([<span class="number">1</span>, <span class="number">4</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">3</span>]), Box::new([<span class="number">2</span>, <span class="number">0</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">1</span>]), <span class="number">5</span>);
-<a href=#3734 id=3734 data-nosnippet>3734</a>
-<a href=#3735 id=3735 data-nosnippet>3735</a>		<span class="kw">let </span>perm_left = <span class="macro">mat!</span>[
-<a href=#3736 id=3736 data-nosnippet>3736</a>			[<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">1.0</span>],
-<a href=#3737 id=3737 data-nosnippet>3737</a>			[<span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>],
-<a href=#3738 id=3738 data-nosnippet>3738</a>			[<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>],
-<a href=#3739 id=3739 data-nosnippet>3739</a>			[<span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>],
-<a href=#3740 id=3740 data-nosnippet>3740</a>			[<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>],
-<a href=#3741 id=3741 data-nosnippet>3741</a>			[<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>],
-<a href=#3742 id=3742 data-nosnippet>3742</a>		];
-<a href=#3743 id=3743 data-nosnippet>3743</a>		<span class="kw">let </span>perm_right = <span class="macro">mat!</span>[
-<a href=#3744 id=3744 data-nosnippet>3744</a>			[<span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>],
-<a href=#3745 id=3745 data-nosnippet>3745</a>			[<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">1.0</span>],
-<a href=#3746 id=3746 data-nosnippet>3746</a>			[<span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>],
-<a href=#3747 id=3747 data-nosnippet>3747</a>			[<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>],
-<a href=#3748 id=3748 data-nosnippet>3748</a>			[<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>],
-<a href=#3749 id=3749 data-nosnippet>3749</a>		];
-<a href=#3750 id=3750 data-nosnippet>3750</a>
-<a href=#3751 id=3751 data-nosnippet>3751</a>		<span class="macro">assert!</span>(<span class="kw-2">&amp;</span>pl * pl.as_ref().inverse() == PermRef::&lt;<span class="lifetime">'_</span>, usize&gt;::new_checked(<span class="kw-2">&amp;</span>[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>], <span class="kw-2">&amp;</span>[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>], <span class="number">6</span>));
-<a href=#3752 id=3752 data-nosnippet>3752</a>		<span class="macro">assert!</span>(<span class="kw-2">&amp;</span>perm_left * <span class="kw-2">&amp;</span>A == <span class="kw-2">&amp;</span>pl * <span class="kw-2">&amp;</span>A);
-<a href=#3753 id=3753 data-nosnippet>3753</a>		<span class="macro">assert!</span>(<span class="kw-2">&amp;</span>A * <span class="kw-2">&amp;</span>perm_right == <span class="kw-2">&amp;</span>A * <span class="kw-2">&amp;</span>pr);
-<a href=#3754 id=3754 data-nosnippet>3754</a>	}
-<a href=#3755 id=3755 data-nosnippet>3755</a>
-<a href=#3756 id=3756 data-nosnippet>3756</a>	<span class="attr">#[test]
-<a href=#3757 id=3757 data-nosnippet>3757</a>	</span><span class="kw">fn </span>test_matmul_col_row() {
-<a href=#3758 id=3758 data-nosnippet>3758</a>		<span class="kw">let </span>A = Col::from_fn(<span class="number">6</span>, |i| i <span class="kw">as </span>f64);
-<a href=#3759 id=3759 data-nosnippet>3759</a>		<span class="kw">let </span>B = Row::from_fn(<span class="number">6</span>, |j| (<span class="number">5 </span>* j + <span class="number">1</span>) <span class="kw">as </span>f64);
+<a href=#3705 id=3705 data-nosnippet>3705</a>		assert_matrix_approx_eq(A.as_ref() - B.as_ref(), <span class="kw-2">&amp;</span>expected);
+<a href=#3706 id=3706 data-nosnippet>3706</a>		assert_matrix_approx_eq(<span class="kw-2">&amp;</span>A - <span class="kw-2">&amp;</span>B, <span class="kw-2">&amp;</span>expected);
+<a href=#3707 id=3707 data-nosnippet>3707</a>		assert_matrix_approx_eq(A.as_ref() - <span class="kw-2">&amp;</span>B, <span class="kw-2">&amp;</span>expected);
+<a href=#3708 id=3708 data-nosnippet>3708</a>		assert_matrix_approx_eq(<span class="kw-2">&amp;</span>A - B.as_ref(), <span class="kw-2">&amp;</span>expected);
+<a href=#3709 id=3709 data-nosnippet>3709</a>		assert_matrix_approx_eq(A.as_ref() - B.clone(), <span class="kw-2">&amp;</span>expected);
+<a href=#3710 id=3710 data-nosnippet>3710</a>		assert_matrix_approx_eq(<span class="kw-2">&amp;</span>A - B.clone(), <span class="kw-2">&amp;</span>expected);
+<a href=#3711 id=3711 data-nosnippet>3711</a>		assert_matrix_approx_eq(A.clone() - B.as_ref(), <span class="kw-2">&amp;</span>expected);
+<a href=#3712 id=3712 data-nosnippet>3712</a>		assert_matrix_approx_eq(A.clone() - <span class="kw-2">&amp;</span>B, <span class="kw-2">&amp;</span>expected);
+<a href=#3713 id=3713 data-nosnippet>3713</a>		assert_matrix_approx_eq(A - B, <span class="kw-2">&amp;</span>expected);
+<a href=#3714 id=3714 data-nosnippet>3714</a>	}
+<a href=#3715 id=3715 data-nosnippet>3715</a>
+<a href=#3716 id=3716 data-nosnippet>3716</a>	<span class="attr">#[test]
+<a href=#3717 id=3717 data-nosnippet>3717</a>	</span><span class="kw">fn </span>test_row_sub() {
+<a href=#3718 id=3718 data-nosnippet>3718</a>		<span class="kw">let </span>(A, B) = rows();
+<a href=#3719 id=3719 data-nosnippet>3719</a>		<span class="kw">let </span>expected = <span class="macro">row!</span>[<span class="number">10.7</span>, -<span class="number">11.6</span>];
+<a href=#3720 id=3720 data-nosnippet>3720</a>
+<a href=#3721 id=3721 data-nosnippet>3721</a>		assert_row_approx_eq(A.as_ref() - B.as_ref(), <span class="kw-2">&amp;</span>expected);
+<a href=#3722 id=3722 data-nosnippet>3722</a>		assert_row_approx_eq(<span class="kw-2">&amp;</span>A - <span class="kw-2">&amp;</span>B, <span class="kw-2">&amp;</span>expected);
+<a href=#3723 id=3723 data-nosnippet>3723</a>		assert_row_approx_eq(A.as_ref() - <span class="kw-2">&amp;</span>B, <span class="kw-2">&amp;</span>expected);
+<a href=#3724 id=3724 data-nosnippet>3724</a>		assert_row_approx_eq(<span class="kw-2">&amp;</span>A - B.as_ref(), <span class="kw-2">&amp;</span>expected);
+<a href=#3725 id=3725 data-nosnippet>3725</a>		assert_row_approx_eq(A.as_ref() - B.clone(), <span class="kw-2">&amp;</span>expected);
+<a href=#3726 id=3726 data-nosnippet>3726</a>		assert_row_approx_eq(A.clone() - B.as_ref(), <span class="kw-2">&amp;</span>expected);
+<a href=#3727 id=3727 data-nosnippet>3727</a>		assert_row_approx_eq(<span class="kw-2">&amp;</span>A - B.clone(), <span class="kw-2">&amp;</span>expected);
+<a href=#3728 id=3728 data-nosnippet>3728</a>		assert_row_approx_eq(A.clone() - <span class="kw-2">&amp;</span>B, <span class="kw-2">&amp;</span>expected);
+<a href=#3729 id=3729 data-nosnippet>3729</a>		assert_row_approx_eq(A - B, <span class="kw-2">&amp;</span>expected);
+<a href=#3730 id=3730 data-nosnippet>3730</a>	}
+<a href=#3731 id=3731 data-nosnippet>3731</a>
+<a href=#3732 id=3732 data-nosnippet>3732</a>	<span class="attr">#[test]
+<a href=#3733 id=3733 data-nosnippet>3733</a>	</span><span class="kw">fn </span>test_col_sub() {
+<a href=#3734 id=3734 data-nosnippet>3734</a>		<span class="kw">let </span>(A, B) = cols();
+<a href=#3735 id=3735 data-nosnippet>3735</a>		<span class="kw">let </span>expected = <span class="macro">col!</span>[<span class="number">10.7</span>, -<span class="number">11.6</span>];
+<a href=#3736 id=3736 data-nosnippet>3736</a>
+<a href=#3737 id=3737 data-nosnippet>3737</a>		assert_col_approx_eq(A.as_ref() - B.as_ref(), <span class="kw-2">&amp;</span>expected);
+<a href=#3738 id=3738 data-nosnippet>3738</a>		assert_col_approx_eq(<span class="kw-2">&amp;</span>A - <span class="kw-2">&amp;</span>B, <span class="kw-2">&amp;</span>expected);
+<a href=#3739 id=3739 data-nosnippet>3739</a>		assert_col_approx_eq(A.as_ref() - <span class="kw-2">&amp;</span>B, <span class="kw-2">&amp;</span>expected);
+<a href=#3740 id=3740 data-nosnippet>3740</a>		assert_col_approx_eq(<span class="kw-2">&amp;</span>A - B.as_ref(), <span class="kw-2">&amp;</span>expected);
+<a href=#3741 id=3741 data-nosnippet>3741</a>		assert_col_approx_eq(A.as_ref() - B.clone(), <span class="kw-2">&amp;</span>expected);
+<a href=#3742 id=3742 data-nosnippet>3742</a>		assert_col_approx_eq(A.clone() - B.as_ref(), <span class="kw-2">&amp;</span>expected);
+<a href=#3743 id=3743 data-nosnippet>3743</a>		assert_col_approx_eq(<span class="kw-2">&amp;</span>A - B.clone(), <span class="kw-2">&amp;</span>expected);
+<a href=#3744 id=3744 data-nosnippet>3744</a>		assert_col_approx_eq(A.clone() - <span class="kw-2">&amp;</span>B, <span class="kw-2">&amp;</span>expected);
+<a href=#3745 id=3745 data-nosnippet>3745</a>		assert_col_approx_eq(A - B, <span class="kw-2">&amp;</span>expected);
+<a href=#3746 id=3746 data-nosnippet>3746</a>	}
+<a href=#3747 id=3747 data-nosnippet>3747</a>
+<a href=#3748 id=3748 data-nosnippet>3748</a>	<span class="attr">#[test]
+<a href=#3749 id=3749 data-nosnippet>3749</a>	</span><span class="kw">fn </span>test_neg() {
+<a href=#3750 id=3750 data-nosnippet>3750</a>		<span class="kw">let </span>(A, <span class="kw">_</span>) = matrices();
+<a href=#3751 id=3751 data-nosnippet>3751</a>
+<a href=#3752 id=3752 data-nosnippet>3752</a>		<span class="kw">let </span>expected = <span class="macro">mat!</span>[[-<span class="number">2.8</span>, <span class="number">3.3</span>], [<span class="number">1.7</span>, -<span class="number">5.2</span>], [-<span class="number">4.6</span>, <span class="number">8.3</span>],];
+<a href=#3753 id=3753 data-nosnippet>3753</a>
+<a href=#3754 id=3754 data-nosnippet>3754</a>		<span class="macro">assert!</span>(-A == expected);
+<a href=#3755 id=3755 data-nosnippet>3755</a>	}
+<a href=#3756 id=3756 data-nosnippet>3756</a>
+<a href=#3757 id=3757 data-nosnippet>3757</a>	<span class="attr">#[test]
+<a href=#3758 id=3758 data-nosnippet>3758</a>	</span><span class="kw">fn </span>test_scalar_mul() {
+<a href=#3759 id=3759 data-nosnippet>3759</a>		<span class="kw">use </span><span class="kw">crate</span>::Scale <span class="kw">as </span>scale;
 <a href=#3760 id=3760 data-nosnippet>3760</a>
-<a href=#3761 id=3761 data-nosnippet>3761</a>		<span class="comment">// outer product
-<a href=#3762 id=3762 data-nosnippet>3762</a>		</span><span class="macro">assert!</span>(<span class="kw-2">&amp;</span>A * <span class="kw-2">&amp;</span>B == A.as_mat() * B.as_mat());
-<a href=#3763 id=3763 data-nosnippet>3763</a>		<span class="comment">// inner product
-<a href=#3764 id=3764 data-nosnippet>3764</a>		</span><span class="macro">assert!</span>(<span class="kw-2">&amp;</span>B * <span class="kw-2">&amp;</span>A == (B.as_mat() * A.as_mat())[(<span class="number">0</span>, <span class="number">0</span>)],);
-<a href=#3765 id=3765 data-nosnippet>3765</a>	}
-<a href=#3766 id=3766 data-nosnippet>3766</a>
-<a href=#3767 id=3767 data-nosnippet>3767</a>	<span class="kw">fn </span>assert_matrix_approx_eq(given: Mat&lt;f64&gt;, expected: <span class="kw-2">&amp;</span>Mat&lt;f64&gt;) {
-<a href=#3768 id=3768 data-nosnippet>3768</a>		<span class="macro">assert_eq!</span>(given.nrows(), expected.nrows());
-<a href=#3769 id=3769 data-nosnippet>3769</a>		<span class="macro">assert_eq!</span>(given.ncols(), expected.ncols());
-<a href=#3770 id=3770 data-nosnippet>3770</a>		<span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..given.nrows() {
-<a href=#3771 id=3771 data-nosnippet>3771</a>			<span class="kw">for </span>j <span class="kw">in </span><span class="number">0</span>..given.ncols() {
-<a href=#3772 id=3772 data-nosnippet>3772</a>				<span class="macro">assert_approx_eq!</span>(given.as_ref()[(i, j)], expected.as_ref()[(i, j)]);
-<a href=#3773 id=3773 data-nosnippet>3773</a>			}
-<a href=#3774 id=3774 data-nosnippet>3774</a>		}
-<a href=#3775 id=3775 data-nosnippet>3775</a>	}
-<a href=#3776 id=3776 data-nosnippet>3776</a>}</code></pre></div></section></main></body></html>
+<a href=#3761 id=3761 data-nosnippet>3761</a>		<span class="kw">let </span>(A, <span class="kw">_</span>) = matrices();
+<a href=#3762 id=3762 data-nosnippet>3762</a>		<span class="kw">let </span>k = <span class="number">3.0</span>;
+<a href=#3763 id=3763 data-nosnippet>3763</a>		<span class="kw">let </span>expected = Mat::from_fn(A.nrows(), A.ncols(), |i, j| A.as_ref()[(i, j)] * k);
+<a href=#3764 id=3764 data-nosnippet>3764</a>
+<a href=#3765 id=3765 data-nosnippet>3765</a>		{
+<a href=#3766 id=3766 data-nosnippet>3766</a>			assert_matrix_approx_eq(A.as_ref() * scale(k), <span class="kw-2">&amp;</span>expected);
+<a href=#3767 id=3767 data-nosnippet>3767</a>			assert_matrix_approx_eq(<span class="kw-2">&amp;</span>A * scale(k), <span class="kw-2">&amp;</span>expected);
+<a href=#3768 id=3768 data-nosnippet>3768</a>			assert_matrix_approx_eq(A.as_ref() * scale(k), <span class="kw-2">&amp;</span>expected);
+<a href=#3769 id=3769 data-nosnippet>3769</a>			assert_matrix_approx_eq(<span class="kw-2">&amp;</span>A * scale(k), <span class="kw-2">&amp;</span>expected);
+<a href=#3770 id=3770 data-nosnippet>3770</a>			assert_matrix_approx_eq(A.as_ref() * scale(k), <span class="kw-2">&amp;</span>expected);
+<a href=#3771 id=3771 data-nosnippet>3771</a>			assert_matrix_approx_eq(<span class="kw-2">&amp;</span>A * scale(k), <span class="kw-2">&amp;</span>expected);
+<a href=#3772 id=3772 data-nosnippet>3772</a>			assert_matrix_approx_eq(A.clone() * scale(k), <span class="kw-2">&amp;</span>expected);
+<a href=#3773 id=3773 data-nosnippet>3773</a>			assert_matrix_approx_eq(A.clone() * scale(k), <span class="kw-2">&amp;</span>expected);
+<a href=#3774 id=3774 data-nosnippet>3774</a>			assert_matrix_approx_eq(A * scale(k), <span class="kw-2">&amp;</span>expected);
+<a href=#3775 id=3775 data-nosnippet>3775</a>		}
+<a href=#3776 id=3776 data-nosnippet>3776</a>
+<a href=#3777 id=3777 data-nosnippet>3777</a>		<span class="kw">let </span>(A, <span class="kw">_</span>) = matrices();
+<a href=#3778 id=3778 data-nosnippet>3778</a>		{
+<a href=#3779 id=3779 data-nosnippet>3779</a>			assert_matrix_approx_eq(scale(k) * A.as_ref(), <span class="kw-2">&amp;</span>expected);
+<a href=#3780 id=3780 data-nosnippet>3780</a>			assert_matrix_approx_eq(scale(k) * <span class="kw-2">&amp;</span>A, <span class="kw-2">&amp;</span>expected);
+<a href=#3781 id=3781 data-nosnippet>3781</a>			assert_matrix_approx_eq(scale(k) * A.as_ref(), <span class="kw-2">&amp;</span>expected);
+<a href=#3782 id=3782 data-nosnippet>3782</a>			assert_matrix_approx_eq(scale(k) * <span class="kw-2">&amp;</span>A, <span class="kw-2">&amp;</span>expected);
+<a href=#3783 id=3783 data-nosnippet>3783</a>			assert_matrix_approx_eq(scale(k) * A.as_ref(), <span class="kw-2">&amp;</span>expected);
+<a href=#3784 id=3784 data-nosnippet>3784</a>			assert_matrix_approx_eq(scale(k) * <span class="kw-2">&amp;</span>A, <span class="kw-2">&amp;</span>expected);
+<a href=#3785 id=3785 data-nosnippet>3785</a>			assert_matrix_approx_eq(scale(k) * A.clone(), <span class="kw-2">&amp;</span>expected);
+<a href=#3786 id=3786 data-nosnippet>3786</a>			assert_matrix_approx_eq(scale(k) * A.clone(), <span class="kw-2">&amp;</span>expected);
+<a href=#3787 id=3787 data-nosnippet>3787</a>			assert_matrix_approx_eq(scale(k) * A, <span class="kw-2">&amp;</span>expected);
+<a href=#3788 id=3788 data-nosnippet>3788</a>		}
+<a href=#3789 id=3789 data-nosnippet>3789</a>	}
+<a href=#3790 id=3790 data-nosnippet>3790</a>
+<a href=#3791 id=3791 data-nosnippet>3791</a>	<span class="attr">#[test]
+<a href=#3792 id=3792 data-nosnippet>3792</a>	</span><span class="kw">fn </span>test_diag_mul() {
+<a href=#3793 id=3793 data-nosnippet>3793</a>		<span class="kw">let </span>(A, <span class="kw">_</span>) = matrices();
+<a href=#3794 id=3794 data-nosnippet>3794</a>		<span class="kw">let </span>diag_left = <span class="macro">mat!</span>[[<span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>], [<span class="number">0.0</span>, <span class="number">2.0</span>, <span class="number">0.0</span>], [<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">3.0</span>]];
+<a href=#3795 id=3795 data-nosnippet>3795</a>		<span class="kw">let </span>diag_right = <span class="macro">mat!</span>[[<span class="number">4.0</span>, <span class="number">0.0</span>], [<span class="number">0.0</span>, <span class="number">5.0</span>]];
+<a href=#3796 id=3796 data-nosnippet>3796</a>
+<a href=#3797 id=3797 data-nosnippet>3797</a>		<span class="macro">assert!</span>(<span class="kw-2">&amp;</span>diag_left * <span class="kw-2">&amp;</span>A == diag_left.as_ref().diagonal() * <span class="kw-2">&amp;</span>A);
+<a href=#3798 id=3798 data-nosnippet>3798</a>		<span class="macro">assert!</span>(<span class="kw-2">&amp;</span>A * <span class="kw-2">&amp;</span>diag_right == <span class="kw-2">&amp;</span>A * diag_right.as_ref().diagonal());
+<a href=#3799 id=3799 data-nosnippet>3799</a>	}
+<a href=#3800 id=3800 data-nosnippet>3800</a>
+<a href=#3801 id=3801 data-nosnippet>3801</a>	<span class="attr">#[test]
+<a href=#3802 id=3802 data-nosnippet>3802</a>	</span><span class="kw">fn </span>test_perm_mul() {
+<a href=#3803 id=3803 data-nosnippet>3803</a>		<span class="kw">let </span>A = Mat::from_fn(<span class="number">6</span>, <span class="number">5</span>, |i, j| (j + <span class="number">5 </span>* i) <span class="kw">as </span>f64);
+<a href=#3804 id=3804 data-nosnippet>3804</a>		<span class="kw">let </span>pl = Perm::&lt;usize&gt;::new_checked(Box::new([<span class="number">5</span>, <span class="number">1</span>, <span class="number">4</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">3</span>]), Box::new([<span class="number">3</span>, <span class="number">1</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">2</span>, <span class="number">0</span>]), <span class="number">6</span>);
+<a href=#3805 id=3805 data-nosnippet>3805</a>		<span class="kw">let </span>pr = Perm::&lt;usize&gt;::new_checked(Box::new([<span class="number">1</span>, <span class="number">4</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">3</span>]), Box::new([<span class="number">2</span>, <span class="number">0</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">1</span>]), <span class="number">5</span>);
+<a href=#3806 id=3806 data-nosnippet>3806</a>
+<a href=#3807 id=3807 data-nosnippet>3807</a>		<span class="kw">let </span>perm_left = <span class="macro">mat!</span>[
+<a href=#3808 id=3808 data-nosnippet>3808</a>			[<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">1.0</span>],
+<a href=#3809 id=3809 data-nosnippet>3809</a>			[<span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>],
+<a href=#3810 id=3810 data-nosnippet>3810</a>			[<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>],
+<a href=#3811 id=3811 data-nosnippet>3811</a>			[<span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>],
+<a href=#3812 id=3812 data-nosnippet>3812</a>			[<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>],
+<a href=#3813 id=3813 data-nosnippet>3813</a>			[<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>],
+<a href=#3814 id=3814 data-nosnippet>3814</a>		];
+<a href=#3815 id=3815 data-nosnippet>3815</a>		<span class="kw">let </span>perm_right = <span class="macro">mat!</span>[
+<a href=#3816 id=3816 data-nosnippet>3816</a>			[<span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>],
+<a href=#3817 id=3817 data-nosnippet>3817</a>			[<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">1.0</span>],
+<a href=#3818 id=3818 data-nosnippet>3818</a>			[<span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>],
+<a href=#3819 id=3819 data-nosnippet>3819</a>			[<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>],
+<a href=#3820 id=3820 data-nosnippet>3820</a>			[<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>],
+<a href=#3821 id=3821 data-nosnippet>3821</a>		];
+<a href=#3822 id=3822 data-nosnippet>3822</a>
+<a href=#3823 id=3823 data-nosnippet>3823</a>		<span class="macro">assert!</span>(<span class="kw-2">&amp;</span>pl * pl.as_ref().inverse() == PermRef::&lt;<span class="lifetime">'_</span>, usize&gt;::new_checked(<span class="kw-2">&amp;</span>[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>], <span class="kw-2">&amp;</span>[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>], <span class="number">6</span>));
+<a href=#3824 id=3824 data-nosnippet>3824</a>		<span class="macro">assert!</span>(<span class="kw-2">&amp;</span>perm_left * <span class="kw-2">&amp;</span>A == <span class="kw-2">&amp;</span>pl * <span class="kw-2">&amp;</span>A);
+<a href=#3825 id=3825 data-nosnippet>3825</a>		<span class="macro">assert!</span>(<span class="kw-2">&amp;</span>A * <span class="kw-2">&amp;</span>perm_right == <span class="kw-2">&amp;</span>A * <span class="kw-2">&amp;</span>pr);
+<a href=#3826 id=3826 data-nosnippet>3826</a>	}
+<a href=#3827 id=3827 data-nosnippet>3827</a>
+<a href=#3828 id=3828 data-nosnippet>3828</a>	<span class="attr">#[test]
+<a href=#3829 id=3829 data-nosnippet>3829</a>	</span><span class="kw">fn </span>test_matmul_col_row() {
+<a href=#3830 id=3830 data-nosnippet>3830</a>		<span class="kw">let </span>A = Col::from_fn(<span class="number">6</span>, |i| i <span class="kw">as </span>f64);
+<a href=#3831 id=3831 data-nosnippet>3831</a>		<span class="kw">let </span>B = Row::from_fn(<span class="number">6</span>, |j| (<span class="number">5 </span>* j + <span class="number">1</span>) <span class="kw">as </span>f64);
+<a href=#3832 id=3832 data-nosnippet>3832</a>
+<a href=#3833 id=3833 data-nosnippet>3833</a>		<span class="comment">// outer product
+<a href=#3834 id=3834 data-nosnippet>3834</a>		</span><span class="macro">assert!</span>(<span class="kw-2">&amp;</span>A * <span class="kw-2">&amp;</span>B == A.as_mat() * B.as_mat());
+<a href=#3835 id=3835 data-nosnippet>3835</a>		<span class="comment">// inner product
+<a href=#3836 id=3836 data-nosnippet>3836</a>		</span><span class="macro">assert!</span>(<span class="kw-2">&amp;</span>B * <span class="kw-2">&amp;</span>A == (B.as_mat() * A.as_mat())[(<span class="number">0</span>, <span class="number">0</span>)],);
+<a href=#3837 id=3837 data-nosnippet>3837</a>	}
+<a href=#3838 id=3838 data-nosnippet>3838</a>
+<a href=#3839 id=3839 data-nosnippet>3839</a>	<span class="kw">fn </span>assert_row_approx_eq(given: Row&lt;f64&gt;, expected: <span class="kw-2">&amp;</span>Row&lt;f64&gt;) {
+<a href=#3840 id=3840 data-nosnippet>3840</a>		<span class="macro">assert_eq!</span>(given.nrows(), expected.nrows());
+<a href=#3841 id=3841 data-nosnippet>3841</a>		<span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..given.nrows() {
+<a href=#3842 id=3842 data-nosnippet>3842</a>			<span class="macro">assert_approx_eq!</span>(given.as_ref()[i], expected.as_ref()[i]);
+<a href=#3843 id=3843 data-nosnippet>3843</a>		}
+<a href=#3844 id=3844 data-nosnippet>3844</a>	}
+<a href=#3845 id=3845 data-nosnippet>3845</a>
+<a href=#3846 id=3846 data-nosnippet>3846</a>	<span class="kw">fn </span>assert_col_approx_eq(given: Col&lt;f64&gt;, expected: <span class="kw-2">&amp;</span>Col&lt;f64&gt;) {
+<a href=#3847 id=3847 data-nosnippet>3847</a>		<span class="macro">assert_eq!</span>(given.ncols(), expected.ncols());
+<a href=#3848 id=3848 data-nosnippet>3848</a>		<span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..given.ncols() {
+<a href=#3849 id=3849 data-nosnippet>3849</a>			<span class="macro">assert_approx_eq!</span>(given.as_ref()[i], expected.as_ref()[i]);
+<a href=#3850 id=3850 data-nosnippet>3850</a>		}
+<a href=#3851 id=3851 data-nosnippet>3851</a>	}
+<a href=#3852 id=3852 data-nosnippet>3852</a>
+<a href=#3853 id=3853 data-nosnippet>3853</a>	<span class="kw">fn </span>assert_matrix_approx_eq(given: Mat&lt;f64&gt;, expected: <span class="kw-2">&amp;</span>Mat&lt;f64&gt;) {
+<a href=#3854 id=3854 data-nosnippet>3854</a>		<span class="macro">assert_eq!</span>(given.nrows(), expected.nrows());
+<a href=#3855 id=3855 data-nosnippet>3855</a>		<span class="macro">assert_eq!</span>(given.ncols(), expected.ncols());
+<a href=#3856 id=3856 data-nosnippet>3856</a>		<span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..given.nrows() {
+<a href=#3857 id=3857 data-nosnippet>3857</a>			<span class="kw">for </span>j <span class="kw">in </span><span class="number">0</span>..given.ncols() {
+<a href=#3858 id=3858 data-nosnippet>3858</a>				<span class="macro">assert_approx_eq!</span>(given.as_ref()[(i, j)], expected.as_ref()[(i, j)]);
+<a href=#3859 id=3859 data-nosnippet>3859</a>			}
+<a href=#3860 id=3860 data-nosnippet>3860</a>		}
+<a href=#3861 id=3861 data-nosnippet>3861</a>	}
+<a href=#3862 id=3862 data-nosnippet>3862</a>}</code></pre></div></section></main></body></html>
