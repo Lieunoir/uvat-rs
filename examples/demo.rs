@@ -1,7 +1,7 @@
 use core::f32;
 use core::f64;
 use deuxfleurs::types::SurfaceIndices;
-use deuxfleurs::{egui, Color, State, StateBuilder};
+use deuxfleurs::{egui, ui::LoadObjButton, RunningState, Settings, StateHandle};
 use uvat_rs::utils::{build_edge_map, compute_tutte_parameterization, get_boundary_loop};
 use uvat_rs::{UVATOptions, UVAT};
 
@@ -16,8 +16,9 @@ fn main() {
 pub fn run() {
     let mut options = UVATOptions::default();
 
-    let callback = move |ui: &mut egui::Ui, state: &mut State| {
+    let callback = move |ui: &mut egui::Ui, state: &mut RunningState| {
         ui.label("Load a triangular mesh disk homeomorphic or of genus 0, then run UVAT (this may take a while to compute).");
+        ui.add(LoadObjButton::new("Load OBJ", "loaded mesh", state));
         ui.add(
             egui::Slider::new(&mut options.lambda, 0.0..=10.0)
                 .text("lambda")
@@ -94,21 +95,6 @@ pub fn run() {
         }
     };
 
-    let init = |_state: &mut State| {};
-    StateBuilder::run(
-        1080,
-        720,
-        None,
-        deuxfleurs::Settings {
-            color: Color {
-                r: 1.0,
-                g: 1.0,
-                b: 1.0,
-                a: 1.0,
-            },
-            ..Default::default()
-        },
-        init,
-        callback,
-    );
+    let handle = deuxfleurs::init();
+    handle.run(1080, 720, None, Settings::default(), callback);
 }

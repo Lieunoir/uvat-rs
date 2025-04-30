@@ -4,10 +4,10 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-faer = "0.22.4"
+faer = "0.22.6"
 faer-traits = "0.22"
-pulp = "0.18"
+pulp = "0.21.5"
 rayon = "1.10"
 
 [dev-dependencies]
-deuxfleurs = { git = "https://github.com/Lieunoir/deuxfleurs", rev = "89f5438" }
+deuxfleurs = { git = "https://github.com/Lieunoir/deuxfleurs", rev = "4e1457d4" }
